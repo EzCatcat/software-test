@@ -126,7 +126,7 @@ public class NextDateCalculator extends JFrame {
         cancelButton.addActionListener(e -> System.exit(0)); // 关闭窗口
     }
 
-    private void calculateNextDay() {
+    public void calculateNextDay() {
         try {
             int year = Integer.parseInt(yearField.getText().trim());
             int month = Integer.parseInt(monthField.getText().trim());
@@ -136,7 +136,8 @@ public class NextDateCalculator extends JFrame {
 
             // 检查日期是否在有效范围内
             if (date.isBefore(LocalDate.of(1800, 1, 1)) || date.isAfter(LocalDate.of(2050, 12, 31))) {
-                JOptionPane.showMessageDialog(this, "输入错误：日期必须在 1800-01-01 到 2050-12-31 之间。");
+                showMessageDialog("输入错误：日期必须在 1800-01-01 到 2050-12-31 之间。");
+                outputField.setText("输入错误：日期必须在 1800-01-01 到 2050-12-31 之间。");
                 return;
             }
 
@@ -145,8 +146,20 @@ public class NextDateCalculator extends JFrame {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             outputField.setText(nextDay.format(formatter));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "输入错误：请确保年份、月份和日期是有效的数字。");
+            outputField.setText("输入错误：请确保年份、月份和日期是有效的数字。");
+            showMessageDialog("输入错误：请确保年份、月份和日期是有效的数字。");
         }
+    }
+
+    // 自动确认的对话框
+    private void showMessageDialog(String message) {
+        JOptionPane optionPane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE);
+        JDialog dialog = optionPane.createDialog("错误");
+        dialog.setModal(false); // 设置为非模态，使程序不等待对话框关闭
+        dialog.setVisible(true);
+        Timer timer = new Timer(2000, e -> dialog.dispose()); // 2秒后自动关闭对话框
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private void clearFields() {
@@ -163,4 +176,3 @@ public class NextDateCalculator extends JFrame {
         });
     }
 }
-
